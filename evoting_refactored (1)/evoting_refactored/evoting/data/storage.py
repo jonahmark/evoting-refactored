@@ -6,7 +6,7 @@ JSON persistence. This is the single source of truth for all data.
 import datetime
 import json
 import os
-
+# small update
 from config import DATA_FILE, DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_FULL_NAME, DEFAULT_ADMIN_EMAIL
 from models.admin import Admin
 from models.candidate import Candidate
