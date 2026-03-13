@@ -5,7 +5,6 @@ No business logic; only data structure and serialization.
 
 import datetime
 
-
 class Candidate:
     def __init__(
         self, id, full_name, national_id, date_of_birth, age, gender,
