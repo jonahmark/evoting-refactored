@@ -31,19 +31,27 @@ Package / File What it does
 main.py Just the entry point. Creates the services and views and starts
 the loop. config.py All the constants in one place —age limits, roles, file name, election types. models/ One class per entity: Candidate, Voter, Admin, Poll, VotingStation, Vote. services/ The business logic — one service per area of functionality. data/storage.py The Store class that holds all data and handles saving/loadingthe JSON file. ui/ Colour codes, reusable display helpers, and input prompt
 functions. views/ The actual screens and menus —one view file per role
-(admin, voter, auth). Design Principles Applied
+(admin, voter, auth). 
+
+# Design Principles Applied
 
 ## Modular Design
 
 The main thing we tried to do was give each file one job. In the original, everything was inone place, so changing how the ballot casting worked meant carefully navigating a functionthat also handled the UI, the audit log, and the file save. In the refactored version, eachof
-those concerns is in a different file. We also moved all the constants into config.py early on. The original had values like 25, 75, and 18 scattered through different functions with no explanation of what they meant. Namingthem MIN_CANDIDATE_AGE, MAX_CANDIDATE_AGE, and MIN_VOTER_AGEinone place makes them self-documenting and means you only change themonce. Object-Oriented Design
+those concerns is in a different file. We also moved all the constants into config.py early on. The original had values like 25, 75, and 18 scattered through different functions with no explanation of what they meant. Namingthem MIN_CANDIDATE_AGE, MAX_CANDIDATE_AGE, and MIN_VOTER_AGEinone place makes them self-documenting and means you only change themonce. 
+
+## Object-Oriented Design
+
 The original used plain Python dictionaries for everything. A candidate was just a dictionary, a voter was just a dictionary, a vote was just a dictionary so there were no classes at all for
 any of the data. We replaced each of these with a proper class in the models/ package. Each class holds its
 own data and has to_dict() and from_dict() methods so that saving and loading fromJSONworks cleanly. This also means if you want to know what fields a Candidate has, you lookat
 one file — you do not have to trace through the create_candidate() function to find out. The Store class in data/storage.py replaces the 14 global variables from the original. All theapplication data lives inside one object now, and every service receives it through its
 constructor. This was a big improvement over the original where any function could reachinand modify candidates or votes or poll_id_counter directly without going through anycontrolled interface.
 The AuthService class handles the session of who is logged in and what their role is. Intheoriginal, current_user and current_role were global variables that functions like cast_vote()
-and admin_dashboard() accessed directly. Separation of Concerns
+and admin_dashboard() accessed directly. 
+
+## Separation of Concerns
+
 This was the hardest part because the original mixed everything together so thoroughly. Wetried to keep three layers completely separate from each other:
 Layer Where Rule I followed
 Presentation views/, ui/ Only reads input and prints output. No businessdecisions here. Logic services/ Does the actual work. Never prints anythingor
