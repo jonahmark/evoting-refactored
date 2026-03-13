@@ -1,4 +1,4 @@
-# evoting-refactored
+# Evoting-refactored
 ## Names of Group Members
 Odong Jeferson Clinton S24B23/043
 Owino Esther Lyn S24B23/032
@@ -65,7 +65,7 @@ All the original features still work. I tested the full flow — logging in as a
 • Audit log with filtering
 • JSON persistence across sessions
 
-##Conclusion
+## Conclusion
 
 Going through this refactor made the problems with the original very clear in a way that just
 reading about them in theory does not. When you are actually trying to change somethingandyou realise you have to understand six other things first just to make one edit, you feel whyseparation of concerns matters. The application behaves identically to the original. The structure is cleaner, the names saywhat things are, and any change to one part of the system should not require understandingall the other parts to make safely.
