@@ -28,7 +28,7 @@
       "timestamp": "2026-03-12 23:39:53.962079",
       "action": "LOGIN_FAILED",
       "user": "rfe244",
-      "details": "Invalid voter card number or password"
+      "details": "Invalid voter card number or Password"
     }
   ]
 }
