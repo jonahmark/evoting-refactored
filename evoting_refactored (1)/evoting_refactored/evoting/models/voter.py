@@ -3,7 +3,6 @@ Voter model — represents a registered voter's data and identity.
 No business logic; only data structure and serialization.
 """
 
-
 class Voter:
     def __init__(
         self, id, full_name, national_id, date_of_birth, age, gender,
