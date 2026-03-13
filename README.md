@@ -24,14 +24,20 @@ another in a block at the top of the function. You had to keep looking back to r
 each one stood for. The biggest issue though was that functions were doing too many things at once. The
 cast_vote() function is a good example which handled displaying the poll, collecting theuser's choices for each position, validating input, building the vote records, updating thevoter's history, updating the poll's vote count, writing to the audit log, and saving to the JSONfile, all in one place. That made it very hard to change any one part of it without riskingbreaking something else. The same problem appeared in view_detailed_statistics() which mixed calculations withprint
 statements throughout, and in login() which handled admin login, voter login, and voter
-registration all branching off the same function. Project Structure
-We organised the refactored project into five packages, each with a clear job. The idea wasthat if you need to change something, you know immediately which folder to look in without
-having to scroll through hundreds of lines.
-Package / File What it does
-main.py Just the entry point. Creates the services and views and starts
-the loop. config.py All the constants in one place —age limits, roles, file name, election types. models/ One class per entity: Candidate, Voter, Admin, Poll, VotingStation, Vote. services/ The business logic — one service per area of functionality. data/storage.py The Store class that holds all data and handles saving/loadingthe JSON file. ui/ Colour codes, reusable display helpers, and input prompt
-functions. views/ The actual screens and menus —one view file per role
-(admin, voter, auth). 
+registration all branching off the same function. 
+
+## Project Structure
+
+We organised the refactored project into five packages, each with a clear job. The idea wasthat if you need to change something, you know immediately which folder to look in without having to scroll through hundreds of lines.
+| Package / File | What it does |
+|----------------|--------------|
+| `main.py` | Entry point of the application. Creates services and views and starts the program loop. |
+| `config.py` | Stores all application constants such as age limits, roles, file names, and election types. |
+| `models/` | Contains one class per entity: Candidate, Voter, Admin, Poll, VotingStation, and Vote. |
+| `services/` | Contains the business logic layer — one service per functional area. |
+| `data/storage.py` | Defines the `Store` class that holds application data and manages JSON save/load operations. |
+| `ui/` | Provides colour codes, reusable display helpers, and input prompt utilities. |
+| `views/` | Contains the screens and menus — one view file per role (admin, voter, authentication). |
 
 # Design Principles Applied
 
@@ -53,18 +59,32 @@ and admin_dashboard() accessed directly.
 ## Separation of Concerns
 
 This was the hardest part because the original mixed everything together so thoroughly. Wetried to keep three layers completely separate from each other:
-Layer Where Rule I followed
-Presentation views/, ui/ Only reads input and prints output. No businessdecisions here. Logic services/ Does the actual work. Never prints anythingor
-reads from the keyboard. Data models/, data/ Defines what things look like and handles
-persistence. No logic, no UI. The clearest example of this is ballot casting. In the original, cast_vote() was one longfunction that displayed the poll, looped through positions collecting input, built the voterecords, appended them to the global votes list, updated current_user["has_voted_in"], incremented polls[pid]["total_votes_cast"], wrote to the audit log, and called save_data() —all in one place. In the refactored version, VoterView.cast_vote() handles only what the user sees and types, and VoteService.cast_ballot() handles only the logic. If something goes wrong, like the voter
-already voted — the service raises a ValueError with a message, and the viewcatches it anddisplays it. Neither one reaches into the other's territory. A similar separation happened with view_detailed_statistics(). In the original it calculatedeverything — counting candidates, voters, stations, building age groups, computing
+
+| Layer | Where | Rule we Followed |
+|------|------|----------------|
+| Presentation | `views/`, `ui/` | Only reads input and prints output. No business decisions here. |
+| Logic | `services/` | Does the actual work. Never prints anything or reads from the keyboard. |
+| Data | `models/`, `data/` | Defines what things look like and handles persistence. No logic, no UI. |
+
+The clearest example of this is ballot casting. In the original, cast_vote() was one longfunction that displayed the poll, looped through positions collecting input, built the voterecords, appended them to the global votes list, updated current_user["has_voted_in"], incremented polls[pid]["total_votes_cast"], wrote to the audit log, and called save_data() —all in one place. 
+
+In the refactored version, VoterView.cast_vote() handles only what the user sees and types, and VoteService.cast_ballot() handles only the logic. If something goes wrong, like the voter
+already voted — the service raises a ValueError with a message, and the viewcatches it anddisplays it. Neither one reaches into the other's territory. 
+
+A similar separation happened with view_detailed_statistics(). In the original it calculatedeverything — counting candidates, voters, stations, building age groups, computing
 percentages — and printed the results all in the same function. In the refactored version, ResultsService does the calculations and returns the data, and the admin viewjust formats
-and prints it. Clean Code
-A few specific things I focused on here:
+and prints it. 
+
+## Clean Code
+
+A few specific things we focused on here:
 Naming — the view_detailed_statistics() function in the original opened with a line liketc=len(candidates); ac = sum(...) and continued with tv, vv, av, ts, ast —short names youhadtokeep looking up. I replaced these with full names like total_candidates, active_candidates, verified_voters, which say what they are.
 No repeated code — the original had the same kind of table drawing, menu rendering, andpause prompts written out in many different functions. In the refactored version these liveinui/components.py and ui/prompts.py and are shared across all three view files. Short, focused functions — if a function was getting long it was usually because it was doingmore than one thing. For example, the original login() function handled three completelydifferent flows: admin login, voter login, and voter self-registration, all branching insidethesame function. These became three separate methods in the refactored version. Every module also has a short docstring at the top explaining what it is for, which helps alot
-when coming back to the code after time away. Features Preserved
-All the original features still work. I tested the full flow — logging in as admin, creatingastation, registering and verifying a voter, creating positions and a poll, assigning candidates, opening the poll, logging in as the voter and casting a ballot, then viewing the results. Everything behaved the same as the original. • Candidate CRUD with age, education, and criminal record eligibility checks
+when coming back to the code after time away. 
+
+## Features Preserved
+
+All the original features still work. We tested the full flow — logging in as admin, creatingastation, registering and verifying a voter, creating positions and a poll, assigning candidates, opening the poll, logging in as the voter and casting a ballot, then viewing the results. Everything behaved the same as the original. • Candidate CRUD with age, education, and criminal record eligibility checks
 • Voting station management • Position definitions and poll lifecycle (draft, open, closed) • Voter self-registration and admin verification workflow
 • Ballot casting with duplicate prevention and SHA-256 vote hash
 • Results with ASCII bar charts and turnout percentages
