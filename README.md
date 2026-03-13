@@ -1,12 +1,16 @@
-# Evoting-refactored
+# National E-Voting System
+## Refactoring Report
+
 ## Names of Group Members
 Odong Jeferson Clinton S24B23/043
+
 Owino Esther Lyn S24B23/032
+
 Kirabo Faith Kiggundu S24B23/083
+
 Mutebi Jonah Mark S24B23/105
+
 Nakibuuka Allen S24B23/048
-#National E-Voting System
-#Refactoring Report
 
 ## Introduction
 
@@ -78,19 +82,32 @@ and prints it.
 ## Clean Code
 
 A few specific things we focused on here:
-Naming — the view_detailed_statistics() function in the original opened with a line liketc=len(candidates); ac = sum(...) and continued with tv, vv, av, ts, ast —short names youhadtokeep looking up. I replaced these with full names like total_candidates, active_candidates, verified_voters, which say what they are.
+Naming — the view_detailed_statistics() function in the original opened with a line liketc=len(candidates); ac = sum(...) and continued with tv, vv, av, ts, ast —short names you had to keep looking up. We replaced these with full names like total_candidates, active_candidates, verified_voters, which say what they are.
 No repeated code — the original had the same kind of table drawing, menu rendering, andpause prompts written out in many different functions. In the refactored version these liveinui/components.py and ui/prompts.py and are shared across all three view files. Short, focused functions — if a function was getting long it was usually because it was doingmore than one thing. For example, the original login() function handled three completelydifferent flows: admin login, voter login, and voter self-registration, all branching insidethesame function. These became three separate methods in the refactored version. Every module also has a short docstring at the top explaining what it is for, which helps alot
 when coming back to the code after time away. 
 
 ## Features Preserved
 
-All the original features still work. We tested the full flow — logging in as admin, creatingastation, registering and verifying a voter, creating positions and a poll, assigning candidates, opening the poll, logging in as the voter and casting a ballot, then viewing the results. Everything behaved the same as the original. • Candidate CRUD with age, education, and criminal record eligibility checks
-• Voting station management • Position definitions and poll lifecycle (draft, open, closed) • Voter self-registration and admin verification workflow
+All the original features still work. We tested the full flow — logging in as admin, creatingastation, registering and verifying a voter, creating positions and a poll, assigning candidates, opening the poll, logging in as the voter and casting a ballot, then viewing the results. Everything behaved the same as the original. 
+
+• Candidate CRUD with age, education, and criminal record eligibility checks
+
+• Voting station management 
+
+• Position definitions and poll lifecycle (draft, open, closed) 
+
+• Voter self-registration and admin verification workflow
+
 • Ballot casting with duplicate prevention and SHA-256 vote hash
+
 • Results with ASCII bar charts and turnout percentages
+
 • Station-level result breakdowns
+
 • Role-based access for all four admin types and voters
+
 • Audit log with filtering
+
 • JSON persistence across sessions
 
 ## Conclusion
